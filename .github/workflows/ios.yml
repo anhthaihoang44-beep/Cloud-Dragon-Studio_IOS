@@ -61,13 +61,17 @@ jobs:
           retention-days: 14
 
       - name: Upload IPA Release Asset
+        if: github.event_name != 'pull_request'
         continue-on-error: true
         run: |
           if ! gh release view v1.0.0 >/dev/null 2>&1; then
             gh release create v1.0.0 build/ios/iphoneos/CloudDragonStudio.ipa \
-              --title "Cloud Dragon Studio v1.0.0" \
-              --notes "Cloud Dragon Studio Android APK & iOS IPA Releases." || gh release upload v1.0.0 build/ios/iphoneos/CloudDragonStudio.ipa --clobber
+              --title "Cloud Dragon Studio iOS v1.0.0" \
+              --notes "Native iOS IPA package ready for Sideloadly, AltStore, and TrollStore." || gh release upload v1.0.0 build/ios/iphoneos/CloudDragonStudio.ipa --clobber
           else
+            gh release edit v1.0.0 \
+              --title "Cloud Dragon Studio iOS v1.0.0" \
+              --notes "Native iOS IPA package ready for Sideloadly, AltStore, and TrollStore." || true
             gh release upload v1.0.0 build/ios/iphoneos/CloudDragonStudio.ipa --clobber
           fi
         env:
